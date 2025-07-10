@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
+//import 'package:latlong2/latlong.dart';
 import 'package:object_detection_flutter_app/core/theme/app_palette.dart';
-import 'package:object_detection_flutter_app/features/home/Markers.dart';
+import 'package:object_detection_flutter_app/features/home/object_detected.dart';
+import 'package:provider/provider.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -13,24 +14,16 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   // List of marker data
-  
-
-  // Method to add a new marker dynamically
-  void addMarker(String label, LatLng location) {
-    setState(() {
-      Markers().markersData.add({
-        'label': label,
-        'location': location,
-      });
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FlutterMap(
-        options: MapOptions(
-          initialCenter: Markers().markersData.first['location'], // Center on first marker (robot)
+      body: Consumer<ObjectDetected>(
+        builder: (context, objectDetected, _){
+          final mapMarkers = objectDetected.markersData;
+          return FlutterMap(
+            options: MapOptions(
+          initialCenter: mapMarkers.first['location'], // Center on first marker (robot)
           initialZoom: 18.0,
         ),
         children: [
@@ -41,7 +34,7 @@ class _MapPageState extends State<MapPage> {
           ),
 
           MarkerLayer(
-            markers: Markers().markersData.map((data) {
+            markers: mapMarkers.map((data) {
               return Marker(
                 width: 80,
                 height: 80,
@@ -69,7 +62,9 @@ class _MapPageState extends State<MapPage> {
             }).toList(),
           ),
         ],
-      ),
+      );
+        },
+      )
     );
   }
 }

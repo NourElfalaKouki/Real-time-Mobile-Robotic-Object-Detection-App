@@ -1,11 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:object_detection_flutter_app/core/theme/theme.dart';
+import 'package:object_detection_flutter_app/features/authentification/login_page.dart';
 //import 'package:object_detection_flutter_app/features/authentification/login_page.dart';
 //import 'package:object_detection_flutter_app/features/authentification/signup_page.dart';
 import 'package:object_detection_flutter_app/features/home/map_page.dart';
+import 'package:object_detection_flutter_app/features/home/object_detected_table.dart';
+import 'package:provider/provider.dart';
+import 'features/home/object_detected.dart';
+
+
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ObjectDetected(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -16,7 +27,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: AppTheme.DarkThemeMode,
-      home: const MapPage(),
+      home:  LoginPage(
+        //markersData: markersData,
+      ),
+      //home: const MapPage(),
+      //home: const MarkerTable(markersData: markersData),
+      //home: const LoginPage(),
     );
   }
 }
+
