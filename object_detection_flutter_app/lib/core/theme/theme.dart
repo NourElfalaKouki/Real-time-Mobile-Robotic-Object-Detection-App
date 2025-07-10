@@ -8,7 +8,7 @@ class AppTheme{
       contentPadding:EdgeInsets.all(25) ,
       labelStyle: TextStyle(color: Palette.whiteColor),
       focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Palette.greenColor, width: 2.0),
+        borderSide: BorderSide(color: Palette.blueColor, width: 2.0),
       ),
       enabledBorder: OutlineInputBorder(
         borderSide: BorderSide(color: Palette.borderColor, width: 2.0),

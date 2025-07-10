@@ -7,9 +7,22 @@ import 'package:object_detection_flutter_app/features/home/map_page.dart';
 import 'package:object_detection_flutter_app/features/home/object_detected_table.dart';
 import 'package:provider/provider.dart';
 import 'features/home/object_detected.dart';
+import 'features/home/main_page.dart';
 
 
 
+void main() => runApp(
+      ChangeNotifierProvider(
+        create: (_) => ObjectDetected(),
+        child: MaterialApp(
+          title: 'Flutter Demo',
+          theme: AppTheme.DarkThemeMode,
+          home: const MainPage(),
+        ),
+      ),
+    );
+
+/*
 void main() {
   runApp(
     ChangeNotifierProvider(
@@ -17,7 +30,7 @@ void main() {
       child: MyApp(),
     ),
   );
-}
+}*/
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

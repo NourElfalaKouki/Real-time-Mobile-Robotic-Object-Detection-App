@@ -29,7 +29,7 @@ class _ObjectDetectedTableState extends State<ObjectDetectedTable> {
                       label: "label",
                       location: "location",
                       timestamp: "Time",
-                      color: const Color.fromARGB(0, 235, 107, 107),
+                      color: Palette.gradient1,
                       borderColor: Palette.whiteColor,
                     ),
                 ...rowObjects.map((obj) {
