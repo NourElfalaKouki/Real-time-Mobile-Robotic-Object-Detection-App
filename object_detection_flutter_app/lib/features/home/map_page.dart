@@ -23,7 +23,7 @@ class _MapPageState extends State<MapPage> {
           final mapMarkers = objectDetected.markersData;
           return FlutterMap(
             options: MapOptions(
-          initialCenter: mapMarkers.first['location'], // Center on first marker (robot)
+          initialCenter: mapMarkers.first['location'], 
           initialZoom: 18.0,
         ),
         children: [

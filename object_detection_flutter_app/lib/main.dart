@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:object_detection_flutter_app/core/theme/theme.dart';
 import 'package:object_detection_flutter_app/features/authentification/login_page.dart';
+import 'package:object_detection_flutter_app/features/authentification/signup_page.dart';
 //import 'package:object_detection_flutter_app/features/authentification/login_page.dart';
 //import 'package:object_detection_flutter_app/features/authentification/signup_page.dart';
 import 'package:object_detection_flutter_app/features/home/map_page.dart';
@@ -10,14 +11,13 @@ import 'features/home/object_detected.dart';
 import 'features/home/main_page.dart';
 
 
-
 void main() => runApp(
       ChangeNotifierProvider(
         create: (_) => ObjectDetected(),
         child: MaterialApp(
           title: 'Flutter Demo',
           theme: AppTheme.DarkThemeMode,
-          home: const MainPage(),
+          home: const MyApp(),
         ),
       ),
     );
@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: AppTheme.DarkThemeMode,
-      home:  LoginPage(
+      home:  SignupPage(
         //markersData: markersData,
       ),
       //home: const MapPage(),

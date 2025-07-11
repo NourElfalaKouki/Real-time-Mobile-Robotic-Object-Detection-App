@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:object_detection_flutter_app/features/home/table_cell.dart';
-
+import 'package:object_detection_flutter_app/core/theme/app_palette.dart';
 
 class TableRowWidget extends StatelessWidget {
   final String label;
@@ -26,21 +26,21 @@ class TableRowWidget extends StatelessWidget {
           child: CustomTableCell(
             text: label,
             color: color,
-            borderColor: borderColor,
+            borderColor: Palette.transparentColor,
           ),
         ),
         Expanded(
           child:  CustomTableCell(
             text: location,
             color: color,
-            borderColor: borderColor,
+            borderColor: Palette.transparentColor,
           ),
         ),
         Expanded(
           child: CustomTableCell(
             text: timestamp,
             color: color,
-            borderColor: borderColor,
+            borderColor: Palette.transparentColor,
           ),
         ),
       ],
