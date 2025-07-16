@@ -38,6 +38,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   provider: ^6.1.5
   socket_io_client: ^2.0.3+1
+  path_provider: ^2.0.15
+  permission_handler: ^10.4.0
 
 dev_dependencies:
   flutter_test:

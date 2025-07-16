@@ -10,7 +10,6 @@ import 'package:provider/provider.dart';
 import 'features/home/object_detected.dart';
 import 'features/home/main_page.dart';
 import 'features/home/object_detection_socket_service.dart';
-import 'features/home/connection.dart';
 
 void main() {
   final objectDetected = ObjectDetected();

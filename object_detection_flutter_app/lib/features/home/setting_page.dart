@@ -16,7 +16,7 @@ class _SettingPageState extends State<SettingPage> {
         padding: const EdgeInsets.all(16.0),
         child: Center(
           child: ExportButton(
-            onExport: (format) => print('Exporting as $format'),
+            
           ),
         ),
       ),

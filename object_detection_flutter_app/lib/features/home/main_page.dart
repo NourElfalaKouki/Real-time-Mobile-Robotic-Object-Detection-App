@@ -14,12 +14,13 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
-  
-  final List<Widget> _pages = [
-    MapPage(),
-    ObjectDetectedTable(),
-    SettingPage(),
-  ];
+  late final List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = const [MapPage(), ObjectDetectedTable(), SettingPage()];
+  }
 
   void _onIconTap(int index) {
     setState(() {
@@ -35,10 +36,9 @@ class _MainPageState extends State<MainPage> {
         child: _pages[_selectedIndex],
       ), // Display selected page
       bottomNavigationBar: CustomNavbar(
-      selectedIndex: _selectedIndex,
-      onTap: _onIconTap,
-      )  ,
+        selectedIndex: _selectedIndex,
+        onTap: _onIconTap,
+      ),
     );
   }
 }
-
