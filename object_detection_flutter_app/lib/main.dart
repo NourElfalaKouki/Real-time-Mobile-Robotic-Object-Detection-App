@@ -9,11 +9,18 @@ import 'package:object_detection_flutter_app/features/home/object_detected_table
 import 'package:provider/provider.dart';
 import 'features/home/object_detected.dart';
 import 'features/home/main_page.dart';
+import 'features/home/object_detection_socket_service.dart';
+import 'features/home/connection.dart';
 
-
-void main() => runApp(
-      ChangeNotifierProvider(
-        create: (_) => ObjectDetected(),
+void main() {
+  final objectDetected = ObjectDetected();
+  runApp(
+  
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<ObjectDetected>.value(value: objectDetected),
+          ChangeNotifierProvider(create: (_) => SocketService(objectDetected)..initSocket()),
+        ],
         child: MaterialApp(
           title: 'Flutter Demo',
           theme: AppTheme.DarkThemeMode,
@@ -21,7 +28,7 @@ void main() => runApp(
         ),
       ),
     );
-
+}
 /*
 void main() {
   runApp(
@@ -40,7 +47,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: AppTheme.DarkThemeMode,
-      home:  SignupPage(
+      home:  MainPage(
         //markersData: markersData,
       ),
       //home: const MapPage(),
