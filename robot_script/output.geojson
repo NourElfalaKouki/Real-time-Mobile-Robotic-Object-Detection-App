@@ -1,0 +1,411 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.15938528908737,
+          37.02204087551094
+        ]
+      },
+      "properties": {
+        "label": "person",
+        "distance": 24000.91
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.200121687060012,
+          36.87011614064188
+        ]
+      },
+      "properties": {
+        "label": "backpack",
+        "distance": 7252.55
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.159419054632556,
+          37.0268448019525
+        ]
+      },
+      "properties": {
+        "label": "person",
+        "distance": 24532.04
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.203361224745674,
+          36.88450229686799
+        ]
+      },
+      "properties": {
+        "label": "backpack",
+        "distance": 8873.17
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.161320758190985,
+          37.018003298923475
+        ]
+      },
+      "properties": {
+        "label": "person",
+        "distance": 23540.57
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.213625544034823,
+          36.91906518051274
+        ]
+      },
+      "properties": {
+        "label": "backpack",
+        "distance": 12816.19
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.15999655998148,
+          37.026339398383264
+        ]
+      },
+      "properties": {
+        "label": "person",
+        "distance": 24472.05
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.207676052227743,
+          36.8974475311247
+        ]
+      },
+      "properties": {
+        "label": "backpack",
+        "distance": 10359.36
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.160962481159123,
+          37.01649166279009
+        ]
+      },
+      "properties": {
+        "label": "person",
+        "distance": 23375.79
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.205194782510922,
+          36.88742816669644
+        ]
+      },
+      "properties": {
+        "label": "backpack",
+        "distance": 9226.28
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.160449015523668,
+          37.01659531316524
+        ]
+      },
+      "properties": {
+        "label": "person",
+        "distance": 23390.88
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.212088713386462,
+          36.91094087337607
+        ]
+      },
+      "properties": {
+        "label": "backpack",
+        "distance": 11906.99
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.16003601685242,
+          37.01571604418017
+        ]
+      },
+      "properties": {
+        "label": "person",
+        "distance": 23296.61
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.209622606221497,
+          36.90253158706722
+        ]
+      },
+      "properties": {
+        "label": "backpack",
+        "distance": 10948.23
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.159146878069466,
+          37.019397847832366
+        ]
+      },
+      "properties": {
+        "label": "person",
+        "distance": 23710.38
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.208186622097246,
+          36.89763408274749
+        ]
+      },
+      "properties": {
+        "label": "backpack",
+        "distance": 10389.86
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.160599106958099,
+          37.015101470483096
+        ]
+      },
+      "properties": {
+        "label": "person",
+        "distance": 23224.56
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.206910662483377,
+          36.89328180782076
+        ]
+      },
+      "properties": {
+        "label": "backpack",
+        "distance": 9893.66
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.162029502281996,
+          37.00561021212052
+        ]
+      },
+      "properties": {
+        "label": "person",
+        "distance": 22164.46
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.203731418040032,
+          36.88243523952319
+        ]
+      },
+      "properties": {
+        "label": "backpack",
+        "distance": 8657.04
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.162308732190041,
+          37.00276211647819
+        ]
+      },
+      "properties": {
+        "label": "person",
+        "distance": 21847.41
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.20399377675298,
+          36.883330443942754
+        ]
+      },
+      "properties": {
+        "label": "backpack",
+        "distance": 8759.1
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.162681668267638,
+          36.99436788423257
+        ]
+      },
+      "properties": {
+        "label": "person",
+        "distance": 20916.14
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.162996671131063,
+          36.99123078527849
+        ]
+      },
+      "properties": {
+        "label": "person",
+        "distance": 20566.87
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.164772847142599,
+          36.986408947634786
+        ]
+      },
+      "properties": {
+        "label": "person",
+        "distance": 20021.11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.205898973936549,
+          36.889830593360244
+        ]
+      },
+      "properties": {
+        "label": "backpack",
+        "distance": 9500.18
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.16462354204957,
+          36.988010962937274
+        ]
+      },
+      "properties": {
+        "label": "person",
+        "distance": 20199.4
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.163613243968971,
+          36.99884948782077
+        ]
+      },
+      "properties": {
+        "label": "person",
+        "distance": 21405.59
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.1638086818424,
+          36.99675306339277
+        ]
+      },
+      "properties": {
+        "label": "person",
+        "distance": 21172.28
+      }
+    }
+  ]
+}

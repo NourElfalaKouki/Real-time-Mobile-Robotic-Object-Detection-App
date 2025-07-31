@@ -151,7 +151,7 @@ io.on('connection', (socket) => {
     const variedData = createVariedGeoJson();
     socket.emit('object-detected', variedData);
     console.log('Sent object-detected data to client:', socket.id);
-  }, 5000);
+  }, 750);
   
   // Handle client disconnect
   socket.on('disconnect', () => {

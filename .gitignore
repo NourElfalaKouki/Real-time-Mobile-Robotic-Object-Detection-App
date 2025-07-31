@@ -1,0 +1,4 @@
+robot_script/venv/
+robot_script/dpt_swin2_tiny_256.pt
+robot_script/yolo11n.pt
+robot_script/yolo11x.pt
