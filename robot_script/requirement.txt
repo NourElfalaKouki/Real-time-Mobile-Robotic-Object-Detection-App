@@ -1,0 +1,10 @@
+torch
+opencv-python
+pyrealsense2
+numpy
+Pillow
+transformers
+ultralytics
+geocoder
+python-socketio
+eventlet
