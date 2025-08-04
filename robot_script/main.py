@@ -7,6 +7,7 @@ from object_geojson import create_geojson
 from depth_camera import DepthCamera, compute_average_depth, calculate_bearing, calculate_gps_coordinates
 from web_camera import WebcamCamera
 from socket_server import SocketServer
+from datetime import datetime
 import threading
 
 def initialize_camera():
@@ -49,10 +50,12 @@ def main():
     while True:
         objects = []
         CURRENT_LAT, CURRENT_LON = get_current_location() if is_depth else (None, None)
+        Timestamp = datetime.now().isoformat()
         objects.append({
                 "label": "robot",
                 "lat": CURRENT_LAT,
-                "lon": CURRENT_LON
+                "lon": CURRENT_LON,
+                "timestamp": Timestamp
             })
         
         frame, depth_data = camera.get_frame()
@@ -94,7 +97,8 @@ def main():
                 "id"    : det["id"],
                 "label": label,
                 "lat": lat,
-                "lon": lon
+                "lon": lon,
+                "timestamp": Timestamp,
             })
 
         geojson_data = create_geojson(objects)
