@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:object_detection_flutter_app/features/authentification/Password_widget.dart';
 import 'package:object_detection_flutter_app/features/authentification/auth_button.dart';
 import 'package:object_detection_flutter_app/features/authentification/signup_page.dart';
+import 'package:object_detection_flutter_app/features/home/main_page.dart';
 import 'package:object_detection_flutter_app/core/theme/app_palette.dart';
 
 class LoginPage extends StatefulWidget {
@@ -12,15 +15,44 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final emailController = TextEditingController();
+  final nameController = TextEditingController(); // ✅ changed
   final passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
-    emailController.dispose();
+    nameController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _login() async {
+    if (!formKey.currentState!.validate()) return;
+
+    final url = Uri.parse("http://10.0.2.2:3000/login");
+    final response = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        "name": nameController.text.trim(),
+        "password": passwordController.text.trim(),
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Login successful')),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const MainPage()),
+      );
+    } else {
+      final error = jsonDecode(response.body)['error'] ?? 'Login failed';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error)),
+      );
+    }
   }
 
   @override
@@ -39,28 +71,23 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 40),
               TextFormField(
-                controller: emailController,
-                validator: (val) {
-                  if (val!.trim().isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  return null;
-                },
+                controller: nameController,
+                validator: (val) =>
+                    val!.trim().isEmpty ? 'Please enter your account name' : null,
                 decoration: const InputDecoration(
-                  labelText: 'Email',
+                  labelText: 'Account Name',
                   border: OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 20),
-              PasswordField(controller: passwordController, labelText: 'Password'),
+              PasswordField(
+                controller: passwordController,
+                labelText: 'Password',
+              ),
               const SizedBox(height: 20),
               AuthButton(
                 buttonText: 'Sign In',
-                onTap: () async {
-                  if (formKey.currentState!.validate()) {
-                    // TODO: implement login logic
-                  }
-                },
+                onTap: _login,
               ),
               const SizedBox(height: 20),
               GestureDetector(

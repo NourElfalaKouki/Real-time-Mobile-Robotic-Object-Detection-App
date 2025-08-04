@@ -3,7 +3,6 @@ import torch
 import geocoder
 from object_detection import detect_objects,use_cuda_yolo
 from depth_estimation import estimate_depth
-from gps_estimation import estimate_gps
 from object_geojson import create_geojson
 from depth_camera import DepthCamera, compute_average_depth, calculate_bearing, calculate_gps_coordinates
 from web_camera import WebcamCamera
@@ -23,11 +22,17 @@ def initialize_camera():
     return camera, is_depth
 
 def get_current_location():
-    g = geocoder.ip('me')
-    return g.latlng if g.ok else None
+    try:
+        g = geocoder.ip('me')
+        if g.ok:
+            return g.latlng
+        else:
+            print(f"Geocoder error: {g.error}\n")
+    except Exception as e:
+        print(f"Geocoder exception: {str(e)}\n")
 
 def main():
-    socket_server = SocketServer(host='192.168.0.7', port=3000)
+    socket_server = SocketServer(host='192.168.0.7', port=5000)
     threading.Thread(target=socket_server.run, daemon=True).start()
     
     
@@ -69,12 +74,11 @@ def main():
             x1, y1, x2, y2 = det["bbox"]
 
             depth_val, _ = estimate_depth(frame, center)
-            distance = depth_val * 10  
 
             if CURRENT_LAT is not None and CURRENT_LON is not None and is_depth:
                 distance = compute_average_depth(x1, y1, x2, y2, depth_data)
                 bearing = calculate_bearing(center[0], camera.f_x, camera.c_x, 0)
-                lat, lon = calculate_gps_coordinates(CURRENT_LAT, CURRENT_LON, distance_m, bearing)
+                lat, lon = calculate_gps_coordinates(CURRENT_LAT, CURRENT_LON, distance, bearing)
             else:
                 lat, lon = None, None
 
@@ -94,6 +98,7 @@ def main():
             })
 
         geojson_data = create_geojson(objects)
+        print("Sending GeoJSON data to socket server...", geojson_data ,"\n")
         socket_server.send_frame_data(geojson_data)
         # Show frame + depth map
         height = frame.shape[0]

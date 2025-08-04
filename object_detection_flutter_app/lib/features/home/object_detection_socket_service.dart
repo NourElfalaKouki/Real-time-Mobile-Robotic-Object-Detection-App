@@ -18,8 +18,8 @@ class SocketService with ChangeNotifier {
     print('🔄 [SocketService] Initializing socket connection...');
     
     _socket = IO.io(
-      'http://10.0.2.2:8000', 
-      //'http://192.168.0.8:8000',
+      //'http://10.0.2.2:5S000',
+      'http://192.168.0.7:5000',
       IO.OptionBuilder()
         .setTransports(['websocket'])
         .enableReconnection()
