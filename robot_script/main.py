@@ -9,6 +9,7 @@ from web_camera import WebcamCamera
 from socket_server import SocketServer
 from datetime import datetime
 import threading
+import requests
 
 def initialize_camera():
     try:
@@ -22,15 +23,22 @@ def initialize_camera():
         is_depth = False
     return camera, is_depth
 
+
+
 def get_current_location():
     try:
-        g = geocoder.ip('me')
-        if g.ok:
-            return g.latlng
+        response = requests.get("http://ip-api.com/json/")
+        data = response.json()
+        if data["status"] == "success":
+            return data["lat"], data["lon"]
         else:
-            print(f"Geocoder error: {g.error}\n")
+            print("IP-API error:", data)
     except Exception as e:
-        print(f"Geocoder exception: {str(e)}\n")
+        print("Exception in IP-API:", e)
+
+    return None, None
+
+
 
 def main():
     socket_server = SocketServer(host='192.168.0.7', port=5000)
@@ -49,7 +57,7 @@ def main():
 
     while True:
         objects = []
-        CURRENT_LAT, CURRENT_LON = get_current_location() if is_depth else (None, None)
+        CURRENT_LAT, CURRENT_LON = get_current_location() 
         Timestamp = datetime.now().isoformat()
         objects.append({
                 "label": "robot",
@@ -83,9 +91,8 @@ def main():
                 bearing = calculate_bearing(center[0], camera.f_x, camera.c_x, 0)
                 lat, lon = calculate_gps_coordinates(CURRENT_LAT, CURRENT_LON, distance, bearing)
             else:
-                lat, lon = None, None
+                lat, lon = CURRENT_LAT,CURRENT_LON
 
-            # Draw detection
             cv2.rectangle(frame, (x1+30, y1+30), (x2 -30, y2-30), (0, 255, 0), 2)
             cv2.putText(frame, label, (x1+30, y1+25), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2)
             cv2.putText(frame, f"Conf: {confidence:.2f}", (x1+30, y1+15), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 255), 2)
@@ -104,10 +111,9 @@ def main():
         geojson_data = create_geojson(objects)
         print("Sending GeoJSON data to socket server...", geojson_data ,"\n")
         socket_server.send_frame_data(geojson_data)
-        # Show frame + depth map
         height = frame.shape[0]
         depth_colored_resized = cv2.resize(depth_colored, (int(depth_colored.shape[1] * height / depth_colored.shape[0]), height))
-        combined = cv2.hconcat([frame, depth_colored_resized])
+        combined = cv2.vconcat([frame, depth_colored_resized])
         cv2.imshow("Camera & Depth Map", combined)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):

@@ -1,6 +1,7 @@
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter/foundation.dart';
 import 'package:object_detection_flutter_app/features/home/object_detected.dart';
+import 'dart:convert';
 
 class SocketService with ChangeNotifier {
   final ObjectDetected objectDetected;
@@ -16,16 +17,18 @@ class SocketService with ChangeNotifier {
 
   void initSocket() {
     print('🔄 [SocketService] Initializing socket connection...');
-    
+
     _socket = IO.io(
-      //'http://10.0.2.2:5S000',
       'http://192.168.0.7:5000',
       IO.OptionBuilder()
-        .setTransports(['websocket'])
-        .enableReconnection()
-        .enableForceNew()
-        .build(),
+          .setTransports(['websocket', 'polling']) 
+          .enableReconnection()
+          .enableForceNew()
+          .build(),
     );
+    _socket.onAny((event, data) {
+      debugPrint('📡 Received [$event]: $data');
+    });
 
     _socket.onConnect((_) {
       debugPrint('✅ [SocketService] Socket connected successfully');
@@ -59,20 +62,32 @@ class SocketService with ChangeNotifier {
       debugPrint('📦 [SocketService] Data type: ${data.runtimeType}');
       debugPrint('📦 [SocketService] Data: $data');
 
-      if (data is Map<String, dynamic>) {
-        try {
-          debugPrint('🔄 [SocketService] Calling objectDetected.updateFromGeoJson...');
-          objectDetected.updateFromGeoJson(data);
-          debugPrint('✅ [SocketService] Successfully updated ObjectDetected');
-          debugPrint('📊 [SocketService] Markers count: ${objectDetected.markersData.length}');
-          debugPrint('📊 [SocketService] Labels: ${objectDetected.labels}');
-          notifyListeners();
-        } catch (e) {
-          debugPrint('❌ [SocketService] Error updating ObjectDetected: $e');
-          debugPrint('❌ [SocketService] Stack trace: ${StackTrace.current}');
+      try {
+        Map<String, dynamic> decodedData;
+        
+        if (data is String) {
+          // Handle JSON string
+          debugPrint('🔄 [SocketService] Decoding JSON string...');
+          decodedData = json.decode(data);
+        } else if (data is Map) {
+          // Handle already parsed JSON object
+          debugPrint('🔄 [SocketService] Using Map directly...');
+          decodedData = Map<String, dynamic>.from(data);
+        } else {
+          debugPrint('❌ [SocketService] Unsupported data type: ${data.runtimeType}');
+          return;
         }
-      } else {
-        debugPrint('❌ [SocketService] Received data is not Map<String, dynamic>');
+
+        debugPrint('🔄 [SocketService] Calling objectDetected.updateFromGeoJson...');
+        objectDetected.updateFromGeoJson(decodedData);
+
+        debugPrint('✅ [SocketService] Successfully updated ObjectDetected');
+        debugPrint('📊 [SocketService] Markers count: ${objectDetected.markersData.length}');
+        debugPrint('📊 [SocketService] Labels: ${objectDetected.labels}');
+        notifyListeners();
+      } catch (e) {
+        debugPrint('❌ [SocketService] Error updating ObjectDetected: $e');
+        debugPrint('❌ [SocketService] Stack trace: ${StackTrace.current}');
       }
     });
 
