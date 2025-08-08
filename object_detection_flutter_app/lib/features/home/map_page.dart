@@ -104,7 +104,7 @@ class _MapPageState extends State<MapPage> {
                 markers: filteredMarkers.map((data) {
                   final timestamp = data['timestamp'].toString();
                   final timeOnly = timestamp.split('T').length > 1
-                      ? timestamp.split('T')[1].split('.')[0] // '16:48:26'
+                      ? timestamp.split('T')[1].split('.')[0] 
                       : timestamp;
 
                   return Marker(

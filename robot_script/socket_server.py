@@ -10,7 +10,6 @@ class SocketServer:
         self.host = host
         self.port = port
 
-        # Create async Socket.IO server
         self.sio = socketio.AsyncServer(
             cors_allowed_origins="*",
             async_mode="asgi",
@@ -19,7 +18,6 @@ class SocketServer:
         )
         self.app = socketio.ASGIApp(self.sio)
 
-        # Register event handlers
         self.sio.event(self.on_connect)
         self.sio.event(self.on_disconnect)
 
@@ -31,7 +29,6 @@ class SocketServer:
 
     def send_frame_data(self, geojson_data):
         try:
-            # Schedule async emission from sync context
             import asyncio
             asyncio.run(self._emit_data(geojson_data))
         except Exception as e:

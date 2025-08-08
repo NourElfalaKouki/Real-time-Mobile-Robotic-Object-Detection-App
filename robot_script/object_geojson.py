@@ -12,6 +12,7 @@ def create_geojson(objects):
                 "properties": {
                     "label": obj["label"],
                     "timestamp": obj["timestamp"] if "timestamp" in obj else None,
+                    "altitude": obj.get("altitude", None),
                 }
             } for obj in objects
         ]

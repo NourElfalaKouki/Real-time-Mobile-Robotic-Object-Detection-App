@@ -10,6 +10,8 @@ from socket_server import SocketServer
 from datetime import datetime
 import threading
 import requests
+from gps_reader import GPSReader
+import serial
 
 def initialize_camera():
     try:
@@ -25,40 +27,42 @@ def initialize_camera():
 
 
 
-def get_current_location():
+def get_current_location(gps, timeout=5):
+    if gps is not None and gps.is_available() and gps.is_connected():
+        print("[Location] Using GPS data...")
+        lat, lon, alt = gps.get_location(timeout=timeout)
+        return lat, lon, alt
+
     try:
         response = requests.get("http://ip-api.com/json/")
         data = response.json()
         if data["status"] == "success":
-            return data["lat"], data["lon"]
+            print("[Location] Using IP-based geolocation...")
+            return data["lat"], data["lon"], 10.0
         else:
-            print("IP-API error:", data)
+            print("[IP-API Error]", data)
     except Exception as e:
-        print("Exception in IP-API:", e)
+        print("[Location Error]", e)
 
-    return None, None
-
+    return None, None, None
 
 
 def main():
     socket_server = SocketServer(host='192.168.0.7', port=5000)
     threading.Thread(target=socket_server.run, daemon=True).start()
-    
+    gps = GPSReader(port='/dev/ttyUSB0', baudrate=9600)
+    threading.Thread(target=gps.start, daemon=True).start()
     
     print("CUDA available:", torch.cuda.is_available())
     if torch.cuda.is_available():
         print("GPU:", torch.cuda.get_device_name(0))
-
-    
-
+        
     camera, is_depth = initialize_camera()
-    
-
 
     while True:
         objects = []
-        CURRENT_LAT, CURRENT_LON = get_current_location() 
-        Timestamp = datetime.now().isoformat()
+        CURRENT_LAT, CURRENT_LON, CURRENT_ALT = get_current_location(gps)  
+        Timestamp = datetime.now().isoformat()+"Z"
         objects.append({
                 "label": "robot",
                 "lat": CURRENT_LAT,
@@ -84,14 +88,14 @@ def main():
             confidence = det["confidence"]
             x1, y1, x2, y2 = det["bbox"]
 
-            depth_val, _ = estimate_depth(frame, center)
+            depth_val = depth_map[center[1], center[0]]
 
             if CURRENT_LAT is not None and CURRENT_LON is not None and is_depth:
                 distance = compute_average_depth(x1, y1, x2, y2, depth_data)
                 bearing = calculate_bearing(center[0], camera.f_x, camera.c_x, 0)
-                lat, lon = calculate_gps_coordinates(CURRENT_LAT, CURRENT_LON, distance, bearing)
+                lat, lon, alt = calculate_gps_coordinates(CURRENT_LAT, CURRENT_LON, distance, bearing)
             else:
-                lat, lon = CURRENT_LAT,CURRENT_LON
+                lat, lon, alt = CURRENT_LAT, CURRENT_LON, CURRENT_ALT
 
             cv2.rectangle(frame, (x1+30, y1+30), (x2 -30, y2-30), (0, 255, 0), 2)
             cv2.putText(frame, label, (x1+30, y1+25), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2)
@@ -104,8 +108,9 @@ def main():
                 "id"    : det["id"],
                 "label": label,
                 "lat": lat,
-                "lon": lon,
+                "lon": lon, 
                 "timestamp": Timestamp,
+                "altitude": alt,
             })
 
         geojson_data = create_geojson(objects)
