@@ -12,14 +12,13 @@ class GPSReader:
         self.gps_lon = None
         self.gps_alt = None
 
-        self._connected = False  # True if serial port opens
-        self._available = False  # True if GPS fix/data received
+        self._connected = False 
+        self._available = False  
 
         self.running = False
         self.lock = threading.Lock()
         self.thread = None
 
-        # ✅ Check if device exists at init
         try:
             test_serial = serial.Serial(self.port, self.baudrate, timeout=1)
             test_serial.close()

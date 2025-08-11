@@ -5,11 +5,11 @@ model = YOLO("yolov8n.pt")
 
 def use_cuda_yolo():
     if torch.cuda.is_available():
+        print("Using GPU for inference")
         model.to('cuda')
 
 def detect_objects(frame):
-    # Run tracking instead of just detection
-    results = model.track(source=frame, persist=True, verbose=False)[0]
+    results = model.track(source=frame,verbose=False)[0]
     detections = []
 
     for box in results.boxes:
