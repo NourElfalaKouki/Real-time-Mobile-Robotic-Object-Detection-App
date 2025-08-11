@@ -25,9 +25,12 @@ flutter run
 
 
 ## Notes
-    Flutter SDK used version: 3.32.5 
-    Ensure your Python server is running and accessible by the Flutter app.
+download yolov8n model 
 
-    The Flutter app connects to the server using the configured IP and port (192.168.0.7:5000 by default).
+Flutter SDK used version: 3.32.5 
 
-    Modify IP addresses in the Flutter app and the python script if running on a different network.
+Ensure your Python server is running and accessible by the Flutter app.
+
+The Flutter app connects to the server using the configured IP and port (192.168.0.7:5000 by default).
+
+Modify IP addresses in the Flutter app and the python script if running on a different network.
