@@ -7,7 +7,7 @@ object_detection_flutter_app/: Flutter mobile application displaying detected ob
 
 ## To set up the Python environmen
   ```bash
-ip install -r ./robot_script/requirements.txt
+pip install -r ./robot_script/requirements.txt
   ```
 
 ### To run the python script, use the command:
