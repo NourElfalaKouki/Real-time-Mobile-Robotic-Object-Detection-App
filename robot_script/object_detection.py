@@ -1,7 +1,7 @@
 from ultralytics import YOLO
 import torch
 
-model = YOLO("yolo11x.pt")
+model = YOLO("yolov8n.pt")
 
 def use_cuda_yolo():
     if torch.cuda.is_available():
