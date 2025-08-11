@@ -19,6 +19,8 @@ import math
 tracker = DeepSort(max_age=30, n_init=3, max_cosine_distance=0.3)
 
 prev_tracked_objects = []
+gpsavailable = False
+gpsconnected = False
 
 def objects_changed(prev, current, pos_tolerance=1.0):
     if len(prev) != len(current):
@@ -48,7 +50,7 @@ def initialize_camera():
 
 
 def get_current_location(gps, timeout=5):
-    if gps is not None and gps.is_available() and gps.is_connected():
+    if gps is not None and gpsavailable and gpsconnected:
         print("[Location] Using GPS data...")
         lat, lon, alt = gps.get_location(timeout=timeout)
         return lat, lon, alt
@@ -75,6 +77,12 @@ def main():
 
     gps = GPSReader(port='/dev/ttyUSB0', baudrate=9600)
     threading.Thread(target=gps.start, daemon=True).start()
+    gpsavailable = gps.is_available()
+    gpsconnected = gps.is_connected()
+    if not gpsavailable or not gpsconnected:
+        print("[GPS] GPS not available or not connected.")
+        gps.stop()
+        return
 
     print("CUDA available:", torch.cuda.is_available())
     if torch.cuda.is_available():
