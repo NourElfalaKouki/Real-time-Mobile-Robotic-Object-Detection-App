@@ -5,6 +5,8 @@ import 'package:object_detection_flutter_app/features/authentification/Password_
 import 'package:object_detection_flutter_app/features/authentification/auth_button.dart';
 import 'package:object_detection_flutter_app/features/authentification/login_page.dart';
 import 'package:object_detection_flutter_app/core/theme/app_palette.dart';
+import 'package:object_detection_flutter_app/features/home/main_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -14,14 +16,15 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
-  final nameController = TextEditingController();
+  final usernameController = TextEditingController(); // Changed from nameController
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
+  bool isLoading = false;
 
   @override
   void dispose() {
-    nameController.dispose();
+    usernameController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
     super.dispose();
@@ -31,36 +34,70 @@ class _SignupPageState extends State<SignupPage> {
     if (!formKey.currentState!.validate()) return;
 
     if (passwordController.text != confirmPasswordController.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Passwords do not match')),
-      );
+      _showErrorSnackbar('Passwords do not match');
       return;
     }
 
-    final url = Uri.parse("http://192.168.0.8:9000/signup"); // Android emulator
-    final response = await http.post(
-      url,
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({
-        "name": nameController.text.trim(),
-        "password": passwordController.text.trim(),
-      }),
-    );
+    setState(() => isLoading = true);
+    
+    try {
+      final url = Uri.parse("http://localhost:9000/signup");
+      
+      // Debug print for request
+      print('Sending signup request to: $url');
+      print('Username: ${usernameController.text.trim()}');
+      print('Password: ${passwordController.text.trim()}');
+      
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "username": usernameController.text.trim(), // Changed from "name" to "username"
+          "password": passwordController.text.trim(),
+        }),
+      ).timeout(const Duration(seconds: 10));
 
-    if (response.statusCode == 201) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Signup successful!')),
-      );
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const LoginPage()),
-      );
-    } else {
-      final error = jsonDecode(response.body)['error'] ?? 'Signup failed';
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error)),
-      );
+      // Debug print for response
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+      
+      if (response.statusCode == 201) {
+        // Automatically log user in after successful signup
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', true);
+        
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Signup successful!')),
+        );
+        
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const MainPage()),
+        );
+      } else {
+        // Improved error handling
+        final responseBody = jsonDecode(response.body);
+        final error = responseBody['error'] ?? 'Signup failed (${response.statusCode})';
+        _showErrorSnackbar(error);
+      }
+    } catch (e) {
+      print('Signup error: $e');
+      _showErrorSnackbar('Connection error: ${e.toString()}');
+    } finally {
+      if (mounted) setState(() => isLoading = false);
     }
+  }
+
+  void _showErrorSnackbar(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        duration: const Duration(seconds: 3),
+      ),
+    );
   }
 
   @override
@@ -79,11 +116,12 @@ class _SignupPageState extends State<SignupPage> {
               ),
               const SizedBox(height: 40),
               TextFormField(
-                controller: nameController,
+                controller: usernameController, // Changed from nameController
+                enabled: !isLoading,
                 validator: (val) =>
-                    val!.trim().isEmpty ? 'Please enter your name' : null,
+                    val!.trim().isEmpty ? 'Please enter your username' : null, // Updated message
                 decoration: const InputDecoration(
-                  labelText: 'Account Name',
+                  labelText: 'Username', // Changed from Account Name
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -91,40 +129,48 @@ class _SignupPageState extends State<SignupPage> {
               PasswordField(
                 controller: passwordController,
                 labelText: 'Password',
+                enabled: !isLoading,
               ),
               const SizedBox(height: 20),
               PasswordField(
                 controller: confirmPasswordController,
                 labelText: 'Confirm Password',
+                enabled: !isLoading,
               ),
               const SizedBox(height: 20),
-              AuthButton(
-                buttonText: 'Sign Up',
-                onTap: _signup,
-              ),
+              if (isLoading)
+                const CircularProgressIndicator()
+              else
+                AuthButton(
+                  buttonText: 'Sign Up',
+                  onTap: _signup,
+                ),
               const SizedBox(height: 20),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginPage(),
-                    ),
-                  );
-                },
-                child: RichText(
-                  text: TextSpan(
-                    text: 'Already have an account? ',
-                    style: Theme.of(context).textTheme.titleMedium,
-                    children: const [
-                      TextSpan(
-                        text: 'Log In',
-                        style: TextStyle(
-                          color: Palette.gradient2,
-                          fontWeight: FontWeight.bold,
-                        ),
+              IgnorePointer(
+                ignoring: isLoading,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const LoginPage(),
                       ),
-                    ],
+                    );
+                  },
+                  child: RichText(
+                    text: TextSpan(
+                      text: 'Already have an account? ',
+                      style: Theme.of(context).textTheme.titleMedium,
+                      children: const [
+                        TextSpan(
+                          text: 'Log In',
+                          style: TextStyle(
+                            color: Palette.gradient2,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

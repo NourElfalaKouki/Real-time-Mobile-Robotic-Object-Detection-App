@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 class PasswordField extends StatefulWidget {
   final TextEditingController controller; 
   final String labelText;
+  final bool enabled; // Add enabled parameter
+  
   const PasswordField({
     super.key, 
     required this.controller,
     required this.labelText,
+    this.enabled = true, // Set default value to true
   });
 
   @override
@@ -27,6 +30,7 @@ class _PasswordFieldState extends State<PasswordField> {
     return TextFormField(
       controller: widget.controller,
       obscureText: _obscureText,
+      enabled: widget.enabled, // Add this line to use the enabled parameter
       decoration: InputDecoration(
         labelText: widget.labelText,
         border: const OutlineInputBorder(),
@@ -34,7 +38,7 @@ class _PasswordFieldState extends State<PasswordField> {
           icon: Icon(
             _obscureText ? Icons.visibility_off : Icons.visibility,
           ),
-          onPressed: _toggleVisibility,
+          onPressed: widget.enabled ? _toggleVisibility : null, // Disable toggle when field is disabled
         ),
       ),
     );
