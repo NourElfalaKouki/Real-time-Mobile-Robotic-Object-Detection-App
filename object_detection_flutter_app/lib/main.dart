@@ -11,11 +11,15 @@ import 'features/home/object_detected.dart';
 import 'features/home/main_page.dart';
 import 'features/home/object_detection_socket_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart'; 
 
 void main() async {
   // Ensure Flutter binding is initialized
   WidgetsFlutterBinding.ensureInitialized();
-  
+
+  // Load environment variables
+  await dotenv.load(fileName: ".env");
+
   // Check authentication status
   final prefs = await SharedPreferences.getInstance();
   final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
@@ -41,30 +45,38 @@ void main() async {
     ),
   );
 }
+
 /*
-void main() {
+void main() async {
+  // Ensure Flutter binding is initialized
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Load environment variables
+  await dotenv.load(fileName: ".env");
+
+  // Check authentication status
+  final prefs = await SharedPreferences.getInstance();
+  final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+  // Initialize providers
+  final objectDetected = ObjectDetected();
+  
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => ObjectDetected(),
-      child: MyApp(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ObjectDetected>.value(value: objectDetected),
+        ChangeNotifierProvider(
+          create: (_) => SocketService(objectDetected)..initSocket(),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Object Detection App',
+        theme: AppTheme.DarkThemeMode,
+        // Show LoginPage if not authenticated, MainPage if authenticated
+        home: const MainPage() ,
+        debugShowCheckedModeBanner: false,
+      ),
     ),
   );
-}*/
-/*
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: AppTheme.DarkThemeMode,
-      home:  MainPage(
-        //markersData: markersData,
-      ),
-      //home: const MapPage(),
-      //home: const MarkerTable(markersData: markersData),
-      //home: const LoginPage(),
-    );
-  }
-}*/
+}
+*/

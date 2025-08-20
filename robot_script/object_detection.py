@@ -9,7 +9,7 @@ def use_cuda_yolo():
         model.to('cuda')
 
 def detect_objects(frame):
-    results = model.track(source=frame,verbose=False)[0]
+    results = model.track(source=frame,verbose=False, conf=0.5)[0]
     detections = []
 
     for box in results.boxes:

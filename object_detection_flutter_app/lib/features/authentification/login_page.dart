@@ -7,6 +7,8 @@ import 'package:object_detection_flutter_app/features/authentification/auth_butt
 import 'package:object_detection_flutter_app/features/authentification/signup_page.dart';
 import 'package:object_detection_flutter_app/features/home/main_page.dart';
 import 'package:object_detection_flutter_app/core/theme/app_palette.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -16,7 +18,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final usernameController = TextEditingController(); // Changed from nameController
+  final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   bool isLoading = false;
@@ -34,7 +36,8 @@ class _LoginPageState extends State<LoginPage> {
     setState(() => isLoading = true);
     
     try {
-      final url = Uri.parse("http://localhost:9000/login");
+      final apiUrl = dotenv.env['API_URL'] ?? 'http://localhost:9000';
+      final url = Uri.parse('$apiUrl/login');
       
       // Debug print for request
       print('Sending login request to: $url');
@@ -45,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
         url,
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
-          "username": usernameController.text.trim(), // Changed from "name" to "username"
+          "username": usernameController.text.trim(),
           "password": passwordController.text.trim(),
         }),
       ).timeout(const Duration(seconds: 10));
@@ -105,12 +108,12 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 40),
               TextFormField(
-                controller: usernameController, // Changed from nameController
+                controller: usernameController,
                 enabled: !isLoading,
                 validator: (val) =>
-                    val!.trim().isEmpty ? 'Please enter your username' : null, // Updated message
+                    val!.trim().isEmpty ? 'Please enter your username' : null,
                 decoration: const InputDecoration(
-                  labelText: 'Username', // Changed from Account Name
+                  labelText: 'Username',
                   border: OutlineInputBorder(),
                 ),
               ),

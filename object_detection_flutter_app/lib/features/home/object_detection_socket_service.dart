@@ -2,6 +2,8 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter/foundation.dart';
 import 'package:object_detection_flutter_app/features/home/object_detected.dart';
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart'; 
+
 
 class SocketService with ChangeNotifier {
   final ObjectDetected objectDetected;
@@ -18,8 +20,11 @@ class SocketService with ChangeNotifier {
   void initSocket() {
     print('🔄 [SocketService] Initializing socket connection...');
 
+    final socketUrl = dotenv.env['SOCKET_URL'] ?? 'http://localhost:5000';
+    print('🌐 [SocketService] Connecting to: $socketUrl');
+
     _socket = IO.io(
-      'http://192.168.0.7:5000',
+      socketUrl, 
       IO.OptionBuilder()
           .setTransports(['websocket', 'polling']) 
           .enableReconnection()

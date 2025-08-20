@@ -7,6 +7,8 @@ import 'package:object_detection_flutter_app/features/authentification/login_pag
 import 'package:object_detection_flutter_app/core/theme/app_palette.dart';
 import 'package:object_detection_flutter_app/features/home/main_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -16,7 +18,7 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
-  final usernameController = TextEditingController(); // Changed from nameController
+  final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
@@ -41,7 +43,9 @@ class _SignupPageState extends State<SignupPage> {
     setState(() => isLoading = true);
     
     try {
-      final url = Uri.parse("http://localhost:9000/signup");
+      // Use environment variable for the API URL
+      final apiUrl = dotenv.env['API_URL'] ?? 'http://localhost:9000';
+      final url = Uri.parse('$apiUrl/signup');
       
       // Debug print for request
       print('Sending signup request to: $url');
@@ -52,7 +56,7 @@ class _SignupPageState extends State<SignupPage> {
         url,
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
-          "username": usernameController.text.trim(), // Changed from "name" to "username"
+          "username": usernameController.text.trim(),
           "password": passwordController.text.trim(),
         }),
       ).timeout(const Duration(seconds: 10));
@@ -76,7 +80,6 @@ class _SignupPageState extends State<SignupPage> {
           MaterialPageRoute(builder: (_) => const MainPage()),
         );
       } else {
-        // Improved error handling
         final responseBody = jsonDecode(response.body);
         final error = responseBody['error'] ?? 'Signup failed (${response.statusCode})';
         _showErrorSnackbar(error);
@@ -116,12 +119,12 @@ class _SignupPageState extends State<SignupPage> {
               ),
               const SizedBox(height: 40),
               TextFormField(
-                controller: usernameController, // Changed from nameController
+                controller: usernameController,
                 enabled: !isLoading,
                 validator: (val) =>
-                    val!.trim().isEmpty ? 'Please enter your username' : null, // Updated message
+                    val!.trim().isEmpty ? 'Please enter your username' : null,
                 decoration: const InputDecoration(
-                  labelText: 'Username', // Changed from Account Name
+                  labelText: 'Username',
                   border: OutlineInputBorder(),
                 ),
               ),

@@ -14,7 +14,8 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   late final MapController _mapController;
-  Set<String> _selectedLabels = {};
+  final Set<String> _selectedLabels = {};
+  bool _isInitialized = false;
 
   @override
   void initState() {
@@ -26,8 +27,9 @@ class _MapPageState extends State<MapPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        Set<String> tempSelectedLabels = Set.from(_selectedLabels);
         return StatefulBuilder(
-          builder: (context, setState) {
+          builder: (context, setDialogState) {
             return AlertDialog(
               title: const Text('Filter Objects'),
               content: SingleChildScrollView(
@@ -36,14 +38,12 @@ class _MapPageState extends State<MapPage> {
                   children: availableLabels.map((label) {
                     return CheckboxListTile(
                       title: Text(label),
-                      value: _selectedLabels.contains(label),
+                      value: tempSelectedLabels.contains(label),
                       onChanged: (bool? value) {
-                        setState(() {
-                          if (value == true) {
-                            _selectedLabels.add(label);
-                          } else {
-                            _selectedLabels.remove(label);
-                          }
+                        setDialogState(() {
+                          value == true
+                              ? tempSelectedLabels.add(label)
+                              : tempSelectedLabels.remove(label);
                         });
                       },
                     );
@@ -52,13 +52,15 @@ class _MapPageState extends State<MapPage> {
               ),
               actions: [
                 TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () => Navigator.pop(context),
                   child: const Text('Cancel'),
                 ),
                 TextButton(
                   onPressed: () {
-                    setState(() {}); // Rebuild map markers
-                    Navigator.of(context).pop();
+                    setState(() => _selectedLabels
+                      ..clear()
+                      ..addAll(tempSelectedLabels));
+                    Navigator.pop(context);
                   },
                   child: const Text('Apply'),
                 ),
@@ -75,13 +77,20 @@ class _MapPageState extends State<MapPage> {
     return Scaffold(
       body: Consumer<SocketService>(
         builder: (context, socketService, _) {
-          if (_selectedLabels.isEmpty) {
-            _selectedLabels = Set<String>.from(
-              socketService.objectDetected.labels,
-            );
+          final objectDetected = socketService.objectDetected;
+          final currentLabels = objectDetected.labels;
+
+          // Initialize only once with available labels
+          if (!_isInitialized && currentLabels.isNotEmpty) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              setState(() {
+                _selectedLabels.addAll(currentLabels);
+                _isInitialized = true;
+              });
+            });
           }
 
-          final allMarkers = socketService.objectDetected.markersData;
+          final allMarkers = objectDetected.markersData;
           final filteredMarkers = allMarkers
               .where((marker) => _selectedLabels.contains(marker['label']))
               .toList();
@@ -96,8 +105,7 @@ class _MapPageState extends State<MapPage> {
             ),
             children: [
               TileLayer(
-                urlTemplate:
-                    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 userAgentPackageName: 'com.example.yourapp',
               ),
               MarkerLayer(
@@ -106,6 +114,11 @@ class _MapPageState extends State<MapPage> {
                   final timeOnly = timestamp.split('T').length > 1
                       ? timestamp.split('T')[1].split('.')[0] 
                       : timestamp;
+                      
+                  // Case-insensitive robot check
+                  final isRobot = (data['label'] as String?)
+                      ?.toUpperCase()
+                      .contains('ROBOT') ?? false;
 
                   return Marker(
                     width: 200,
@@ -124,9 +137,9 @@ class _MapPageState extends State<MapPage> {
                             borderRadius: BorderRadius.circular(5),
                           ),
                           child: Text(
-                            '${data['label']}' +
-                                '\nLon: ${data['location'].longitude.toStringAsFixed(5)}' +
-                                '\nLat: ${data['location'].latitude.toStringAsFixed(5)}' +
+                            '${data['label']}'
+                                '\nLon: ${data['location'].longitude.toStringAsFixed(5)}'
+                                '\nLat: ${data['location'].latitude.toStringAsFixed(5)}'
                                 '\nTime: $timeOnly',
                             style: const TextStyle(
                               fontSize: 12,
@@ -137,13 +150,11 @@ class _MapPageState extends State<MapPage> {
                         ),
                         const SizedBox(height: 5),
                         Icon(
-                          data['label'] == 'ROBOT'
-                              ? Icons.circle
-                              : Icons.location_pin,
+                          isRobot ? Icons.circle : Icons.location_pin,
                           size: 40,
-                          color: data['label'] != 'ROBOT'
-                              ? Palette.restMarkerColor
-                              : Palette.robotMarkerColor,
+                          color: isRobot
+                              ? Palette.robotMarkerColor
+                              : Palette.restMarkerColor,
                         ),
                       ],
                     ),
